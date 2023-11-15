@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Amazon Scraper</title>
+    <link rel="shortcut icon" href="/images/fav.png" type="image/x-icon" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script defer src="/js/main.js"></script>
+  </head>
+  <style>
+    :root {
+      --amazon-gold: #d38016;
+    }
+  </style>
+
+  <body
+        class="bg-gray-200 font-sans min-h-screen text-base md:text-xl text-black !leading-normal relative">
+    <main class="flex flex-col gap-8 justify-start">
+
+      <div
+           id="error"
+           class="hidden bg-[var(--amazon-gold)] rounded-2xl absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 p-8 transition-all">
+      </div>
+      
+      <h1 class="text-4xl md:text-6xl mb-8 font-bold p-4 md:p-8 text-center">
+        scrape <span class="text-[var(--amazon-gold)]">Amazon</span> products
+        <a class="underline text-[var(--amazon-gold)] text-sm block" href="https://portfolio-aktouf.netlify.app/" target="_blank">some other cool stuff</a>
+      </h1>
+
+      <form
+            class="flex w-full justify-center p-4 md:p-8 h-min"
+            onsubmit="search(event)">
+        <label for="keyword" class="font-bold flex items-center gap-2 h-[40px]">
+          Keyword:
+          <input
+                 required
+                 class="rounded-lg text-black px-2 min-w-[110px] w-full max-w-[250px] h-full"
+                 id="keyword"
+                 name="keyword"
+                 type="text" />
+          <button
+                  id="searchBtn"
+                  class="grid place-items-center rounded-xl bg-[var(--amazon-gold)] px-2 py-1 text-white hover:opacity-90 
+            w-[80px] 
+            disabled:bg-transparent disabled:border disabled:border-[var(--amazon-gold)] disabled:cursor-not-allowed"
+                  type="submit">
+            Search
+          </button>
+        </label>
+      </form>
+
+      <section
+               id="results"
+               class="flex gap-6 flex-wrap justify-center p-4 md:p-8 relative" />
+    </main>
+  </body>
+
+</html>
