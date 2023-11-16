@@ -1,5 +1,6 @@
 const APi_URL = "/api/scrape?keyword=";
-const input = document.getElementById("keyword");
+const keywordInput = document.getElementById("keyword");
+const asinInput = document.getElementById("asin");
 const resultsDiv = document.getElementById("results");
 const searchBtn = document.getElementById("searchBtn");
 const errorDiv = document.getElementById("error");
@@ -7,7 +8,7 @@ const errorDiv = document.getElementById("error");
 async function search(event) {
 	load(true);
 	resultsDiv.replaceChildren();//empty the previous results
-	let keyword = input.value.trim();
+	let keyword = keywordInput.value.trim();
 	event.preventDefault();
 
   try {
@@ -19,8 +20,8 @@ async function search(event) {
 
 		const data = await res.json();
 
-		if (!data.products.length) alertUser("no products found !");//test this by searching jibrish
-
+		//if (!data.pages.length) alertUser("no products found !");//test this by searching jibrish
+    
 		renderProducts(data);
 
 	} catch (err) {
@@ -33,35 +34,38 @@ async function search(event) {
 
 //display products on the screen
 function renderProducts(data) {
+  for (const [index,page] of Object.entries(data.pages) ) {
+    const h2 = document.createElement("h2");
+    h2.setAttribute("class", "w-full");
+		h2.innerHTML = `Total Products on page:
+  <span class="font-bold text-[var(--amazon-gold)]" >${page.length}</span>`;
+    resultsDiv.append(h2)
+		page.forEach((product) => {
+			const productCard = document.createElement("a");
+			productCard.setAttribute(
+				"class",
+				"bg-white w-[20rem]  rounded overflow-hidden shadow-lg hover:shadow-2xl hover:scale-105 transform-gpu transition-transform cursor-pointer p-3 flex flex-col justify-between h-[420px]"
+			);
+			productCard.setAttribute("href", product.link);
+			productCard.setAttribute("target", "_blank");
 
-  resultsDiv.innerHTML = `<h2 class="absolute -top-8 ">Total Products on the first page:
-  <span class="font-bold text-[var(--amazon-gold)]" >${data.products_count}</span></h2>`;
-	data.products.forEach((product) => {
-		const productCard = document.createElement("a");
-		productCard.setAttribute(
-			"class",
-			"bg-white w-[20rem]  rounded overflow-hidden shadow-lg hover:shadow-2xl hover:scale-105 transform-gpu transition-transform cursor-pointer p-3 flex flex-col justify-between h-[420px]"
-    );
-    productCard.setAttribute('href', product.link);
-    productCard.setAttribute('target', '_blank');
+			const image = document.createElement("img");
+			image.setAttribute("class", "h-[200px] mx-auto");
+			image.src = `${product.image}`;
+			image.alt = `${product.title.substring(0, 15)}`; //clever me :)
 
-		const image = document.createElement("img");
-		image.setAttribute("class", "h-[200px] mx-auto");
-		image.src = `${product.image}`;
-		image.alt = `${product.title.substring(0, 15)}`;//clever me :)
-
-		const details = document.createElement("div");
-		details.setAttribute("class", "px-6 py-4");
-		const starsWidth = //5 stars width=110px, hidding the overflow
-			(parseFloat(product.rating.slice(0, 3)) * 110) / 5;
-    details.innerHTML = `
-      <h2 class="font-bold text-xl mb-2 overflow-hidden line-clamp-3 box-orient-vertical ">${product.title
-      }</h2>
+			const details = document.createElement("div");
+			details.setAttribute("class", "px-6 py-4");
+			const starsWidth = (parseFloat(product.rating.slice(0, 3)) * 110) / 5; //5 stars width=110px, hidding the overflow
+			details.innerHTML = `
+      <h2 class="font-bold text-xl mb-2 overflow-hidden line-clamp-3 box-orient-vertical ">${
+				product.title
+			}</h2>
         <div class="text-gray-700 text-base flex gap-2">
 
             <span
             class="text-yellow-500 !max-w-[${starsWidth || "0"}px]
-             overflow-hidden ${starsWidth ? 'inline-block' : 'hidden'} ">
+             overflow-hidden ${starsWidth ? "inline-block" : "hidden"} ">
              ⭐⭐⭐⭐⭐
              </span>
             <span class="block font-bold">${
@@ -71,9 +75,10 @@ function renderProducts(data) {
 
         <div class="text-sm mt-8">${product.reviews || "no"} reviews</div>
     `;
-		productCard.append(image, details);
-		resultsDiv.appendChild(productCard);
-	});
+			productCard.append(image, details);
+			resultsDiv.appendChild(productCard);
+		});
+	};
 }
 //loader
 function load(toggle) {
