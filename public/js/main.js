@@ -1,36 +1,37 @@
 const APi_URL = "/api/scrape?keyword=";
 const keywordInput = document.getElementById("keyword");
 const asinInput = document.getElementById("asin");
-const resultsDiv = document.getElementById("results");
 const searchBtn = document.getElementById("searchBtn");
 const errorDiv = document.getElementById("error");
 const targetDiv = document.getElementById("target");
 const pagesDiv = document.getElementById("pages");
-
 async function search(event) {
 	load(true);
-  //empty the previous results
+	//empty the previous results
 	targetDiv.replaceChildren();
-  pagesDiv.replaceChildren();
-  
-	let keyword = keywordInput.value.trim();
+	pagesDiv.replaceChildren();
+
+	let keyword = encodeURIComponent(keywordInput.value.trim());
 	let asin = asinInput.value.trim();
-  event.preventDefault();
+	event.preventDefault();
 
 	try {
 		let res = await fetch(apiUrl(keyword, asin));
 
-    // if server validation fails || error || failed to scrape ... 
+		// if server validation fails || error || failed to scrape ...
 		if (!(res.status >= 200 && res.status < 300))
 			throw new Error(res.statusText);
 
 		const data = await res.json();
 
 		// try it using this slfdjsldk sdf987f9sd8f ds8f79 sd87sd9f87 s9d8f7s
-		if (!data.results.targetProduct && !data.results.pages[data.results.pages.length - 1].length)
-		  return alertUser("no products found !");
+		if (
+			!data.results.targetProduct &&
+			!data.results.pages[data.results.pages.length - 1].length
+		)
+			return alertUser("no products found !");
 
-    //render result
+		//render result
 		renderResult(data);
 	} catch (err) {
 		console.log(err);
@@ -44,7 +45,8 @@ async function search(event) {
 function renderResult(data) {
 	let target = data.results.targetProduct;
 	let pages = data.results.pages;
-	if (target) {//target found, show position
+	if (target) {
+		//target found, show position
 		targetDiv.innerHTML = `
       <div class="position mb-4 w-auto">
             <div class="pos-item text-bg-secondary">
@@ -89,20 +91,24 @@ function renderResult(data) {
             </div>
           </div>
       `;
-	} else {//target not found, try this by using jibrish ASIN
+	} else {
+		//target not found, try this by using jibrish ASIN
 		targetDiv.innerHTML = `<h1>product not found in top 5 pages of Amazon</h1>`;
 	}
 
-  pages.forEach((page, index) => {// loop and render pages
+	pages.forEach((page, index) => {
+		// loop and render pages
 		let targetPage = false;
 		if (index + 1 == target.page) {
 			targetPage = true;
 		}
 
-    let pageDiv = renderPage(index + 1, page, target, targetPage);
-    
+		let pageDiv = renderPage(index + 1, page, target, targetPage);
+
 		let h2 = document.createElement("h2");
-    h2.innerHTML = `Page ${index + 1} <span class="tag">${page.length} products</span> ${
+		h2.innerHTML = `Page ${index + 1} <span class="tag">${
+			page.length
+		} products</span> ${
 			targetPage ? '<span class="tag targetTag">Target Page</span>' : ""
 		}`;
 		pagesDiv.prepend(pageDiv);
@@ -114,33 +120,41 @@ function renderPage(pageNum, page, target, targetPage) {
 	let pageDiv = document.createElement("div");
 	pageDiv.classList.add("page");
 
-  page.forEach((product) => {// loop and render products
-    let  targetProd = false;
-    if (targetPage && target.asin == product.asin) {
-      targetProd = true;
-    }
-		let productCard = renderProduct(product,targetProd);
+	page.forEach((product) => {
+		// loop and render products
+		let targetProd = false;
+		if (targetPage && target.asin == product.asin) {
+			targetProd = true;
+		}
+		let productCard = renderProduct(product, targetProd);
 		pageDiv.appendChild(productCard);
 	});
 
 	return pageDiv;
 }
 
-function renderProduct(product,targetProd=false) {
+function renderProduct(product, targetProd = false) {
 	let card = document.createElement("div");
-	card.setAttribute("class", `card prodCard ${targetProd ? 'targetProd':''}`);
+	card.setAttribute("class", `card prodCard ${targetProd ? "targetProd" : ""}`);
 	card.innerHTML = `
-<img src="${product.image}"
-style="max-width: 200px; max-height: 200px;margin-inline: auto;"
-alt="">
+					<div 
+          class="d-flex justify-content-center align-items-center" 
+             style="width:100%;height: 170px;"
+          >
+            <img src="${product.image}"
+              style="max-width: 200px;max-height: 170px;"
+              alt=""
+            />
+          </div>
 <div class="d-flex flex-column p-2 gap-1">
   <p class="p-0 m-0">ASIN : ${product.asin}</p>
   <p class="p-0 m-0 prodTitle">${product.title}</p>
   <p class="p-0 m-0">${product.rating}</p>
-  <p class="p-0 m-0">reviews: ${product.reviews}  <a href="${product.link}" target="_blank" class="p-0 m-0 underline">link</a></p>
+  <p class="p-0 m-0">reviews: ${product.reviews}</p>
+  <a href="${product.link}" target="_blank" class="link">link</a>
 </div>
   `;
-  return card;
+	return card;
 }
 //loader
 function load(toggle) {

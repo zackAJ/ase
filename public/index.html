@@ -1,64 +1,64 @@
 <!DOCTYPE html>
 <html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>Amazon Search Engine</title>
+		<link rel="shortcut icon" href="/images/fav.png" type="image/x-icon" />
+		<link
+			href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+			rel="stylesheet"
+			integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+			crossorigin="anonymous"
+		/>
+		<script
+			src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
+			integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
+			crossorigin="anonymous"
+		></script>
 
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Amazon Search Engine</title>
-    <link rel="shortcut icon" href="/images/fav.png" type="image/x-icon" />
-    <link
-          href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-          rel="stylesheet"
-          integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
-          crossorigin="anonymous" />
-    <script
-            src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"
-            integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL"
-            crossorigin="anonymous"></script>
+		<link rel="stylesheet" href="/css/style.css" />
+		<script defer src="/js/main.js"></script>
+	</head>
 
-    <link rel="stylesheet" href="/css/style.css" />
-    <script defer src="/js/main.js"></script>
-  </head>
+	<body>
+		<main>
+			<div id="error" class="error hidden"></div>
 
-  <body>
-    <main>
-      <div id="error" class="error hidden"></div>
+			<header>
+				<div class="d-flex flex-column align-items-center">
+					<p class="logo">
+						<span style="color: var(--amazon-gold)"> A</span>SE
+					</p>
+					<p class="subLogo">Amazon Search Engine</p>
+				</div>
+			</header>
 
-      <header>
-        <div class="d-flex flex-column align-items-center">
-          <p class="logo" ><span style="color: var(--amazon-gold)"> A</span>SE</p>
-          <p class="subLogo">
-            Amazon Search Engine
-          </p>
-        </div>
-      </header>
+			<form class="form" onsubmit="search(event)">
+				<label for="keyword" class="label">
+					<input
+						required
+						class="input"
+						id="keyword"
+						name="keyword"
+						placeholder="keyword"
+						type="text"
+					/>
+					<input
+						required
+						class="input"
+						id="asin"
+						name="asin"
+						placeholder="ASIN"
+						type="text"
+					/>
+					<button id="searchBtn" class="search" type="submit">Search</button>
+				</label>
+			</form>
 
-      <form class="form" onsubmit="search(event)">
-        <label for="keyword" class="label">
-          <input
-                 required
-                 class="input"
-                 id="keyword"
-                 name="keyword"
-                 placeholder="keyword"
-                 type="text" />
-          <input
-                 required
-                 class="input"
-                 id="asin"
-                 name="asin"
-                 placeholder="ASIN"
-                 type="text" />
-          <button id="searchBtn" class="search" type="submit">
-            Search
-          </button>
-        </label>
-      </form>
-
-      <section id="target" class="target"></section>
-      <section id="pages" class="pages d-flex flex-column">
-      </section>
-    </main>
-  </body>
-
+			<section id="target" class="target"></section>
+			<section id="pages" class="pages d-flex flex-column">
+			</section>
+		</main>
+	</body>
 </html>
