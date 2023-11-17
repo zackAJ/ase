@@ -27,7 +27,7 @@ async function search(event) {
 		const data = await res.json();
 
 		// try it using this slfdjsldk sdf987f9sd8f ds8f79 sd87sd9f87 s9d8f7s
-		if (!data.results.targetProduct && !data.results.pages[0].length)
+		if (!data.results.targetProduct && !data.results.pages[data.results.pages.length - 1].length)
 		  return alertUser("no products found !");
 
     //render result
