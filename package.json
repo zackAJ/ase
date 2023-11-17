@@ -10,7 +10,7 @@
     "test": "npm run build && mocha --require @babel/register"
   },
   "author": "zackAJ <github.com/zackAJ>",
-  "license": "ISC",
+  "license": "MIT",
   "dependencies": {
     "axios": "^1.6.0",
     "cheerio": "^1.0.0-rc.12",
