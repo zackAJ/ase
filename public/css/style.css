@@ -260,7 +260,21 @@ header {
   color: #000000;
   max-width: 250px;
 }
-
+.link{
+  display: block;
+  text-align: center; 
+  position: absolute; 
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: var(--bs-secondary);
+  text-decoration: none;
+  box-sizing: border-box !important;
+  color: white;
+  white-space: no-wrap;
+  overflow: hidden;
+  height: 24px;
+}
 .search {
   /* disabled: bg-transparent disabled:border disabled:border-[var(--amazon-gold)] disabled:cursor-not-allowed */
   display: grid;
