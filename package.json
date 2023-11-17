@@ -2,15 +2,16 @@
   "name": "ase",
   "version": "1.0.0",
   "description": "Amazon Search Engine, find your product's rank using keywords",
-  "main": "lib/index.js",
+  "main": "index.js",
   "scripts": {
-
+    "build": "babel lib -d dist",
     "start": "npm run build && nodemon dist/index.js",
     "serve": "node dist/index.js"
   },
   "author": "zackAJ <github.com/zackAJ>",
   "license": "MIT",
   "dependencies": {
+    "@babel/runtime": "^7.23.2",
     "axios": "^1.6.0",
     "cheerio": "^1.0.0-rc.12",
     "dotenv": "^16.3.1",
