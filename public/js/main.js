@@ -4,81 +4,143 @@ const asinInput = document.getElementById("asin");
 const resultsDiv = document.getElementById("results");
 const searchBtn = document.getElementById("searchBtn");
 const errorDiv = document.getElementById("error");
+const targetDiv = document.getElementById("target");
+const pagesDiv = document.getElementById("pages");
 
 async function search(event) {
 	load(true);
-	resultsDiv.replaceChildren();//empty the previous results
+  //empty the previous results
+	targetDiv.replaceChildren();
+  pagesDiv.replaceChildren();
+  
 	let keyword = keywordInput.value.trim();
-	event.preventDefault();
+	let asin = asinInput.value.trim();
+  event.preventDefault();
 
-  try {
-    
-    let res = await fetch(APi_URL + keyword);
-    
+	try {
+		let res = await fetch(apiUrl(keyword, asin));
+
+    // if server validation fails || error || failed to scrape ... 
 		if (!(res.status >= 200 && res.status < 300))
 			throw new Error(res.statusText);
 
 		const data = await res.json();
 
-		//if (!data.pages.length) alertUser("no products found !");//test this by searching jibrish
-    
-		renderProducts(data);
+		// try it using this slfdjsldk sdf987f9sd8f ds8f79 sd87sd9f87 s9d8f7s
+		if (!data.results.targetProduct && !data.results.pages[0].length)
+		  return alertUser("no products found !");
 
+    //render result
+		renderResult(data);
 	} catch (err) {
 		console.log(err);
-		alertUser();//display error message to the user
-  } finally {//remove loader in all cases
-    load(false);
-  }
+		alertUser(); //display error message to the user
+	} finally {
+		//remove loader in all cases
+		load(false);
+	}
 }
 
-//display products on the screen
-function renderProducts(data) {
-  for (const [index,page] of Object.entries(data.pages) ) {
-    const h2 = document.createElement("h2");
-    h2.setAttribute("class", "w-full");
-		h2.innerHTML = `Total Products on page:
-  <span class="font-bold text-[var(--amazon-gold)]" >${page.length}</span>`;
-    resultsDiv.append(h2)
-		page.forEach((product) => {
-			const productCard = document.createElement("a");
-			productCard.setAttribute(
-				"class",
-				"bg-white w-[20rem]  rounded overflow-hidden shadow-lg hover:shadow-2xl hover:scale-105 transform-gpu transition-transform cursor-pointer p-3 flex flex-col justify-between h-[420px]"
-			);
-			productCard.setAttribute("href", product.link);
-			productCard.setAttribute("target", "_blank");
+function renderResult(data) {
+	let target = data.results.targetProduct;
+	let pages = data.results.pages;
+	if (target) {//target found, show position
+		targetDiv.innerHTML = `
+      <div class="position mb-4 w-auto">
+            <div class="pos-item text-bg-secondary">
+              <h5>Page</h5>
+              <p class="val">${target.page}</p>
+            </div>
+            <div class="pos-item text-bg-dark">
+              <h5>Page Position</h5>
+              <p class="val">${target.page_position}</p>
+            </div>
+            <div class="pos-item bg-black">
+              <h5>Overall Position</h5>
+              <p class="val">${target.overall_position}</p>
+            </div>
+          </div>
+  
+          <img
+            src="${target.image}"
+            class="img-fluid rounded-start mb-4 mx-auto"
+            alt="..."
+            style="align-self: center; max-width: 200px; max-height: 200px"
+          />
+  
+          <div class="info mb-4">
+            <div class="resCol">
+              <p class="property">ASIN:</p>
+              <p class="val">${target.asin}</p>
+            </div>
+            <div class="resCol">
+              <p class="property">title:</p>
+              <p class="val">
+                ${target.title}
+              </p>
+            </div>
+            <div class="resCol">
+              <p class="property">rating:</p>
+              <p class="val">${target.rating}</p>
+            </div>
+            <div class="resCol">
+              <p class="property">reviews:</p>
+              <p class="val">${target.reviews}</p>
+            </div>
+          </div>
+      `;
+	} else {//target not found, try this by using jibrish ASIN
+		targetDiv.innerHTML = `<h1>product not found in top 5 pages of Amazon</h1>`;
+	}
 
-			const image = document.createElement("img");
-			image.setAttribute("class", "h-[200px] mx-auto");
-			image.src = `${product.image}`;
-			image.alt = `${product.title.substring(0, 15)}`; //clever me :)
+  pages.forEach((page, index) => {// loop and render pages
+		let targetPage = false;
+		if (index + 1 == target.page) {
+			targetPage = true;
+		}
 
-			const details = document.createElement("div");
-			details.setAttribute("class", "px-6 py-4");
-			const starsWidth = (parseFloat(product.rating.slice(0, 3)) * 110) / 5; //5 stars width=110px, hidding the overflow
-			details.innerHTML = `
-      <h2 class="font-bold text-xl mb-2 overflow-hidden line-clamp-3 box-orient-vertical ">${
-				product.title
-			}</h2>
-        <div class="text-gray-700 text-base flex gap-2">
+    let pageDiv = renderPage(index + 1, page, target, targetPage);
+    
+		let h2 = document.createElement("h2");
+    h2.innerHTML = `Page ${index + 1} <span class="tag">${page.length} products</span> ${
+			targetPage ? '<span class="tag targetTag">Target Page</span>' : ""
+		}`;
+		pagesDiv.prepend(pageDiv);
+		pagesDiv.prepend(h2);
+	});
+}
 
-            <span
-            class="text-yellow-500 !max-w-[${starsWidth || "0"}px]
-             overflow-hidden ${starsWidth ? "inline-block" : "hidden"} ">
-             ⭐⭐⭐⭐⭐
-             </span>
-            <span class="block font-bold">${
-							product.rating.slice(0, 3) || "No"
-						} Stars</span>
-        </div>
+function renderPage(pageNum, page, target, targetPage) {
+	let pageDiv = document.createElement("div");
+	pageDiv.classList.add("page");
 
-        <div class="text-sm mt-8">${product.reviews || "no"} reviews</div>
-    `;
-			productCard.append(image, details);
-			resultsDiv.appendChild(productCard);
-		});
-	};
+  page.forEach((product) => {// loop and render products
+    let  targetProd = false;
+    if (targetPage && target.asin == product.asin) {
+      targetProd = true;
+    }
+		let productCard = renderProduct(product,targetProd);
+		pageDiv.appendChild(productCard);
+	});
+
+	return pageDiv;
+}
+
+function renderProduct(product,targetProd=false) {
+	let card = document.createElement("div");
+	card.setAttribute("class", `card prodCard ${targetProd ? 'targetProd':''}`);
+	card.innerHTML = `
+<img src="${product.image}"
+style="max-width: 200px; max-height: 200px;margin-inline: auto;"
+alt="">
+<div class="d-flex flex-column p-2 gap-1">
+  <p class="p-0 m-0">ASIN : ${product.asin}</p>
+  <p class="p-0 m-0 prodTitle">${product.title}</p>
+  <p class="p-0 m-0">${product.rating}</p>
+  <p class="p-0 m-0">reviews: ${product.reviews}  <a href="${product.link}" target="_blank" class="p-0 m-0 underline">link</a></p>
+</div>
+  `;
+  return card;
 }
 //loader
 function load(toggle) {
@@ -93,8 +155,12 @@ function load(toggle) {
 //helper to display modal for feedback
 function alertUser(message = "an Error has occured, please try again later") {
 	errorDiv.classList.remove("hidden");
-	errorDiv.textContent=message;
+	errorDiv.textContent = message;
 	setTimeout(() => {
 		errorDiv.classList.add("hidden");
 	}, 3000);
+}
+//helper
+function apiUrl(keyword, asin) {
+	return `${APi_URL + keyword}&asin=${asin}`;
 }
