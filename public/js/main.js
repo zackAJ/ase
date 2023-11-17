@@ -1,19 +1,17 @@
 const APi_URL = "/api/scrape?keyword=";
 const keywordInput = document.getElementById("keyword");
 const asinInput = document.getElementById("asin");
-const resultsDiv = document.getElementById("results");
 const searchBtn = document.getElementById("searchBtn");
 const errorDiv = document.getElementById("error");
 const targetDiv = document.getElementById("target");
 const pagesDiv = document.getElementById("pages");
-
 async function search(event) {
 	load(true);
   //empty the previous results
 	targetDiv.replaceChildren();
   pagesDiv.replaceChildren();
   
-	let keyword = keywordInput.value.trim();
+	let keyword = encodeURIComponent(keywordInput.value.trim());
 	let asin = asinInput.value.trim();
   event.preventDefault();
 
@@ -137,7 +135,9 @@ alt="">
   <p class="p-0 m-0">ASIN : ${product.asin}</p>
   <p class="p-0 m-0 prodTitle">${product.title}</p>
   <p class="p-0 m-0">${product.rating}</p>
-  <p class="p-0 m-0">reviews: ${product.reviews}  <a href="${product.link}" target="_blank" class="p-0 m-0 underline">link</a></p>
+  <p class="p-0 m-0">reviews: ${product.reviews}  <a href="${
+		product.link
+	}" target="_blank" class="p-0 m-0 underline">link</a></p>
 </div>
   `;
   return card;
