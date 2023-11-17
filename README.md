@@ -19,17 +19,22 @@ Please don't abuse it and avoid getting rate-limited / blocked.
 git clone https://github.com/zackAJ/ase
 ```
 
-2- Install dependencies:
+2- cd into project :
+```
+cd ase
+```
+
+3- Install dependencies:
 ```
 npm install
 ```
 
-3- Run project:
+4- Run project:
 ```
 npm start
 ```
 
-4- Open localhost at port 3000:
+5- Open localhost at port 3000:
 ```
 http://localhost:3000
 ```
